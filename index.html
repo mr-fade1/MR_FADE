@@ -1,153 +1,345 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MR FADE</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background: #121212;
-      color: #f5f5f5;
-      font-family: 'Poppins', 'Vazirmatn', sans-serif;
-      padding: 20px;
-      min-height: 100vh;
-    }
-    .header {
-      text-align: center;
-      padding: 50px 20px 40px;
-      animation: fadeInDown 1s ease;
-    }
-    .logo-container {
-      position: relative;
-      display: inline-block;
-      margin: 0 auto 25px;
-    }
-    .logo {
-      width: 300px;
-      max-width: 85%;
-      filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.4));
-      animation: pulseGlow 2s infinite alternate;
-    }
-    .tagline {
-      font-size: 1.3rem;
-      color: #d4af37;
-      font-weight: 600;
-      margin-top: 12px;
-      text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
-    }
-    .services {
-      display: flex;
-      flex-direction: column;
-      gap: 30px;
-      max-width: 620px;
-      margin: 0 auto;
-    }
-    .service-card {
-      background: #1e1e1e;
-      border-radius: 28px;
-      padding: 35px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-      position: relative;
-      overflow: hidden;
-      border: 1px solid #2a2a2a;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-    .service-card::before {
-      content: '';
-      position: absolute;
-      top: -2px;
-      left: -2px;
-      right: -2px;
-      bottom: -2px;
-      background: linear-gradient(45deg, #6c1e1e, #d4af37, #6c1e1e);
-      z-index: -1;
-      border-radius: 30px;
-      opacity: 0;
-      transition: opacity 0.4s;
-    }
-    .service-card:hover::before {
-      opacity: 1;
-    }
-    .service-card:hover {
-      transform: translateY(-12px);
-      box-shadow: 0 15px 40px rgba(108, 30, 30, 0.4), 0 0 25px rgba(212, 175, 55, 0.2);
-    }
-    .service-card h2 {
-      font-size: 2.0rem;
-      color: #f5f5f5;
-      margin-bottom: 16px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-    .service-card p {
-      color: #bbb;
-      font-size: 1.2rem;
-      line-height: 1.6;
-      margin-bottom: 15px;
-    }
-    .service-card .limit {
-      display: inline-block;
-      background: rgba(108, 30, 30, 0.3);
-      color: #d4af37;
-      padding: 8px 22px;
-      border-radius: 30px;
-      font-weight: 600;
-      font-size: 1.1rem;
-      letter-spacing: 0.8px;
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(212, 175, 55, 0.2);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MR FADE | ELITE STUDIO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --acid-yellow: #CCFF00; /* أصفر شبابي فاقع وتريندي جداً */
+            --cyber-cyan: #00F0FF;  /* سماوي نيون */
+            --text-main: #FFFFFF;
+            --text-muted: #888888;
+            --glass-panel: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
 
-    /* Animations */
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes pulseGlow {
-      0% { filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.4)); }
-      100% { filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.7)); }
-    }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-    @media (max-width: 500px) {
-      .logo { width: 260px; }
-      .header { padding: 40px 15px; }
-      .service-card h2 { font-size: 1.8rem; }
-      .service-card { padding: 28px; }
-    }
-  </style>
+        body {
+            background-color: var(--bg-dark); color: var(--text-main);
+            font-family: 'Cairo', sans-serif; overflow-x: hidden;
+            display: flex; flex-direction: column; min-height: 100vh;
+        }
+
+        /* 3D Background & Depth Elements */
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; pointer-events: none; }
+        
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* كلمة FADE عملاقة ومفرغة في الخلفية (ستايل عالمي) */
+        .bg-huge-text {
+            position: fixed; top: 15%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 20vw; font-weight: 900; color: transparent;
+            -webkit-text-stroke: 2px rgba(255, 255, 255, 0.03);
+            z-index: 2; pointer-events: none; user-select: none;
+            text-transform: uppercase; white-space: nowrap; font-style: italic;
+        }
+
+        .main-container {
+            position: relative; z-index: 10; width: 100%; max-width: 480px;
+            margin: 0 auto; padding: 40px 20px; display: flex; flex-direction: column; flex-grow: 1;
+        }
+
+        /* Header Vibe */
+        .hero-header { text-align: center; margin-bottom: 40px; animation: bounceDrop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes bounceDrop { 0% { transform: translateY(-50px) scale(0.9); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+
+        .logo { width: 180px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8)); position: relative; z-index: 2; }
+        
+        .hype-badge {
+            display: inline-block; background: var(--text-main); color: var(--bg-dark);
+            padding: 4px 16px; border-radius: 50px; font-weight: 900; font-size: 0.8rem;
+            letter-spacing: 2px; text-transform: uppercase; margin-top: -10px;
+            position: relative; z-index: 1; box-shadow: 0 5px 15px rgba(255,255,255,0.2);
+            transform: rotate(-2deg);
+        }
+
+        /* Cards Layout */
+        .services-stack { display: flex; flex-direction: column; gap: 20px; width: 100%; }
+
+        /* Youthful Premium Cards */
+        .hype-card {
+            background: var(--glass-panel); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border); border-radius: 24px;
+            padding: 24px; position: relative; cursor: pointer; overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0; transform: translateY(40px); animation: slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            display: flex; flex-direction: column;
+        }
+
+        .hype-card:nth-child(1) { animation-delay: 0.2s; }
+        .hype-card:nth-child(2) { animation-delay: 0.35s; }
+
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* تأثير ألوان النيون عند اللمس */
+        .hype-card::before {
+            content: ''; position: absolute; top: 0; right: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at top right, var(--acid-yellow) 0%, transparent 60%);
+            opacity: 0; transition: 0.4s ease; z-index: 0; pointer-events: none; mix-blend-mode: overlay;
+        }
+        .hype-card:nth-child(2)::before { background: radial-gradient(circle at top right, var(--cyber-cyan) 0%, transparent 60%); }
+
+        .hype-card:hover, .hype-card:active {
+            transform: translateY(-6px) scale(1.02);
+            border-color: rgba(255,255,255,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            background: rgba(20,20,20,0.8);
+        }
+        
+        .hype-card:nth-child(1):hover { border-color: var(--acid-yellow); box-shadow: 0 15px 35px rgba(204, 255, 0, 0.15); }
+        .hype-card:nth-child(2):hover { border-color: var(--cyber-cyan); box-shadow: 0 15px 35px rgba(0, 240, 255, 0.15); }
+        
+        .hype-card:hover::before { opacity: 0.3; }
+
+        .card-content { position: relative; z-index: 1; }
+
+        .card-header-flex { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        
+        .card-title { font-size: 1.6rem; font-weight: 900; color: var(--text-main); font-style: italic; letter-spacing: -0.5px; line-height: 1.1; }
+        
+        /* السهم بيطير بطريقة روشة */
+        .action-icon {
+            width: 36px; height: 36px; background: rgba(255,255,255,0.05); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--glass-border);
+        }
+        .action-icon svg { width: 18px; height: 18px; stroke: var(--text-main); stroke-width: 2.5; fill: none; transition: 0.3s; }
+        
+        .hype-card:nth-child(1):hover .action-icon { background: var(--acid-yellow); border-color: var(--acid-yellow); transform: translateX(-5px) rotate(-45deg); }
+        .hype-card:nth-child(1):hover .action-icon svg { stroke: #000; }
+        
+        .hype-card:nth-child(2):hover .action-icon { background: var(--cyber-cyan); border-color: var(--cyber-cyan); transform: translateX(-5px) rotate(-45deg); }
+        .hype-card:nth-child(2):hover .action-icon svg { stroke: #000; }
+
+        .card-desc { font-size: 0.95rem; font-weight: 600; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; padding-left: 40px; }
+
+        /* الـ Badges (حبوب روشة) */
+        .pill-wrap { display: flex; gap: 10px; }
+        .status-pill {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 8px 16px; border-radius: 12px; font-size: 0.85rem; font-weight: 900;
+            text-transform: uppercase; font-style: italic; letter-spacing: 0.5px;
+        }
+
+        .pill-yellow { background: rgba(204, 255, 0, 0.1); color: var(--acid-yellow); border: 1px solid rgba(204, 255, 0, 0.2); }
+        .pill-cyan { background: rgba(0, 240, 255, 0.1); color: var(--cyber-cyan); border: 1px solid rgba(0, 240, 255, 0.2); }
+
+        /* Footer Youth Style */
+        .creator-footer { margin-top: auto; padding-top: 50px; text-align: center; opacity: 0; animation: slideUp 0.8s 0.6s forwards; }
+        .creator-footer p { font-size: 0.7rem; color: #555; font-weight: 800; text-transform: uppercase; letter-spacing: 4px; }
+        .creator-name {
+            display: inline-block; font-size: 1.2rem; font-weight: 900; font-style: italic;
+            color: var(--text-main); margin-top: 5px; position: relative;
+        }
+        /* خط ملون تحت الاسم */
+        .creator-name::after {
+            content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 3px;
+            background: linear-gradient(90deg, var(--acid-yellow), var(--cyber-cyan));
+            border-radius: 2px;
+        }
+
+    </style>
 </head>
 <body>
-  <div class="header">
-    <div class="logo-container">
-      <img src="https://i.ibb.co/PvMwdD3w/logo.png" alt="MR FADE Logo" class="logo">
-    </div>
-    <div class="tagline">✂️ احتراف • أناقة • تميز</div>
-  </div>
 
-  <div class="services">
-    <div class="service-card" onclick="goToBooking('الحلاقة الكاملة', 20)">
-      <h2>الحلاقة الكاملة مع السعيد 1</h2>
-      <p>حلاقة كامله بإتقان واحتراف</p>
-      <div class="limit">20 موعد يوميًا</div>
-    </div>
-    <div class="service-card" onclick="goToBooking('الحلاقة الكاملة مع احمد', 10)">
-      <h2>الحلاقة الكاملة مع احمد 2</h2>
-      <p>حلاقة كامله بإتقان واحتراف</p>
-      <div class="limit">10 مواعيد يوميًا</div>
-    </div>
-  </div>
+    <!-- الكلمة العملاقة في الخلفية -->
+    <div class="bg-huge-text">FADE</div>
 
-  <script>
-    function goToBooking(service, limit) {
-      localStorage.setItem('selectedService', service);
-      localStorage.setItem('serviceLimit', limit);
-      window.location.href = 'booking.html';
-    }
-  </script>
+    <div class="noise-overlay"></div>
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="main-container">
+        <header class="hero-header">
+            <img src="https://i.ibb.co/PvMwdD3w/logo.png" alt="MR FADE" class="logo">
+            <br>
+            <div class="hype-badge">شياكتك هنا⚡</div>
+        </header>
+
+        <div class="services-stack">
+            <!-- كارت السعيد (Acid Yellow Theme) -->
+            <div class="hype-card" onclick="triggerNav('الحلاقة الكاملة', 20)">
+                <div class="card-content">
+                    <div class="card-header-flex">
+                        <h2 class="card-title">حـلاقـة السـعـيـد</h2>
+                        <div class="action-icon">
+                            <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </div>
+                    </div>
+                    <p class="card-desc">أداء خيالي، تدريج زيرو ماكينة، وتفاصيل بتنطق احترافية. ستايلك في حتة تانية.</p>
+                    <div class="pill-wrap">
+                        <div class="status-pill pill-yellow">20 مكان بس 🔥</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- كارت أحمد (Cyber Cyan Theme) -->
+            <div class="hype-card" onclick="triggerNav('الحلاقة الكاملة مع احمد', 10)">
+                <div class="card-content">
+                    <div class="card-header-flex">
+                        <h2 class="card-title">حـلاقـة أحـمـد</h2>
+                        <div class="action-icon">
+                            <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </div>
+                    </div>
+                    <p class="card-desc">ستايل شبابي بيخطف العين فوراً.</p>
+                    <div class="pill-wrap">
+                        <div class="status-pill pill-cyan">10 أماكن</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="creator-footer">
+            <p>DESIGNED & CODED BY</p>
+            <div class="creator-name">OSAMA ELMAHALAWI</div>
+        </footer>
+    </div>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // --- 3D Hyper-Responsive Neon Scissors ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 100);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // خامة معدنية سوداء تعكس ألوان النيون بقوة
+        const metalMat = new THREE.MeshPhysicalMaterial({
+            color: 0x0a0a0a, metalness: 0.9, roughness: 0.2, clearcoat: 1.0, clearcoatRoughness: 0.1
+        });
+
+        const scissorGroup = new THREE.Group();
+
+        // رسم شفرة مقص (Stylized & Sharp)
+        function createBlade(isThumb) {
+            const half = new THREE.Group();
+
+            // الشفرة
+            const shape = new THREE.Shape();
+            shape.moveTo(0, 0); shape.lineTo(0.3, 5); shape.lineTo(0, 6); shape.lineTo(-0.15, 0); shape.lineTo(0, 0);
+            const extrudeOpts = { depth: 0.05, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.02, bevelThickness: 0.02 };
+            const blade = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, extrudeOpts), metalMat);
+            blade.position.set(0, 0.4, -0.025);
+            half.add(blade);
+
+            // المقبض والحلقة
+            const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.1, 1.5, 16), metalMat);
+            shaft.position.set(0.05, -0.4, 0);
+            half.add(shaft);
+
+            const ring = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.12, 16, 32), metalMat);
+            ring.position.set(0.1, -1.7, 0);
+            if(isThumb) { ring.scale.set(1, 1.2, 1); ring.rotation.x = 0.2; }
+            half.add(ring);
+
+            return half;
+        }
+
+        const bladeA = createBlade(false);
+        const bladeB = createBlade(true);
+        bladeB.rotation.y = Math.PI; 
+        bladeB.position.z = 0.05;
+
+        // مسمار التثبيت
+        const screw = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.15, 32), new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 1, roughness: 0.5 }));
+        screw.rotation.x = Math.PI/2; screw.position.set(0, 0.4, 0.025);
+        
+        scissorGroup.add(bladeA, bladeB, screw);
+        
+        // وضعية المقص
+        scissorGroup.position.set(2, -1, -14); // يمين الشاشة
+        scissorGroup.rotation.z = Math.PI / 6;
+        scene.add(scissorGroup);
+
+        // --- إضاءة الألوان الفاقعة (Neon Studio Lighting) ---
+        scene.add(new THREE.AmbientLight(0x050505));
+
+        // إضاءة صفراء فاقعة تضرب من اليمين
+        const yellowLight = new THREE.PointLight(0xCCFF00, 5, 30);
+        yellowLight.position.set(5, 5, 2);
+        scene.add(yellowLight);
+
+        // إضاءة سماوي نيون تضرب من اليسار
+        const cyanLight = new THREE.PointLight(0x00F0FF, 5, 30);
+        cyanLight.position.set(-5, -5, 5);
+        scene.add(cyanLight);
+        
+        // إضاءة بيضاء خفيفة لإبراز حواف المعدن
+        const rimLight = new THREE.SpotLight(0xffffff, 2);
+        rimLight.position.set(0, 10, 5);
+        rimLight.lookAt(scissorGroup.position);
+        scene.add(rimLight);
+
+        // تفاعل حركي قوي مع الموبايل/الماوس
+        let targetX = 0, targetY = 0;
+        window.addEventListener('mousemove', (e) => {
+            targetX = (e.clientX / window.innerWidth - 0.5) * 2;
+            targetY = (e.clientY / window.innerHeight - 0.5) * 2;
+        });
+
+        const clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            const t = clock.getElapsedTime();
+
+            // حركة طفو شبابية
+            scissorGroup.position.y = Math.sin(t * 1.5) * 0.3 - 1;
+            
+            // دوران استجابي سريع
+            scissorGroup.rotation.y += ((targetX * 0.8) - scissorGroup.rotation.y) * 0.1;
+            scissorGroup.rotation.x += ((-targetY * 0.5) - scissorGroup.rotation.x) * 0.1;
+
+            // --- أنيميشن قص "Snip Snip" على الإيقاع ---
+            // دالة رياضية لعمل حركتين قص سريعتين متتاليتين ثم توقف
+            const cycle = (t * 2) % (Math.PI * 2);
+            let cutAngle = 0;
+            if (cycle < Math.PI) {
+                // موجتين سريعتين (Double Snip)
+                cutAngle = Math.abs(Math.sin(cycle * 2)) * 0.25; 
+            } else {
+                cutAngle = 0; // توقف المقص وهو مفتوح قليلاً
+            }
+            
+            bladeA.rotation.z = cutAngle;
+            bladeB.rotation.z = -cutAngle;
+
+            // دوران الإضاءة حول المقص ليعطي لمعان متلألئ
+            yellowLight.position.x = Math.sin(t) * 8;
+            yellowLight.position.z = Math.cos(t) * 8;
+            cyanLight.position.x = Math.sin(t + Math.PI) * 8;
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // تأثير النقر الخاطف (Snap & Zoom)
+        function triggerNav(srv, limit) {
+            localStorage.setItem('selectedService', srv);
+            localStorage.setItem('serviceLimit', limit);
+            
+            const layout = document.querySelector('.main-container');
+            layout.style.transform = 'scale(0.9) translateY(40px)';
+            layout.style.opacity = '0';
+            layout.style.transition = '0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; // سريع وقوي
+            
+            setTimeout(() => window.location.href = 'booking.html', 300);
+        }
+    </script>
 </body>
 </html>
