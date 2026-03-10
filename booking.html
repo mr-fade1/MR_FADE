@@ -94,7 +94,7 @@
         .power-counter {
             background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border);
             border-radius: 16px; padding: 20px; margin-bottom: 20px;
-            display: flex; flex-direction: column; gap: 10px;
+            display: flex; flex-direction: column; gap: 10px; min-height: 105px; /* لتثبيت الارتفاع أثناء التحميل */
         }
         
         .pc-header { display: flex; justify-content: space-between; align-items: flex-end; }
@@ -107,11 +107,25 @@
         .pc-max { font-size: 1rem; font-weight: 800; color: var(--text-muted); }
         .pc-label { font-size: 0.75rem; font-weight: 800; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; padding-bottom: 4px; }
 
-        .pc-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
+        .pc-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; margin-top: auto; }
         .pc-bar-fill {
             height: 100%; width: 0%; background: var(--acid-yellow); border-radius: 10px;
             box-shadow: 0 0 10px var(--acid-yellow); transition: width 1s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.4s;
         }
+
+        /* ستايل التحميل الجديد */
+        .loading-spots-text {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--cyber-cyan);
+            font-style: italic;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+            margin-bottom: 10px;
+        }
+        .blink-dots {
+            animation: blinker 1.5s linear infinite;
+        }
+        @keyframes blinker { 50% { opacity: 0; } }
 
         /* ----- رسالة اكتمال العدد ----- */
         .sold-out-msg {
@@ -201,14 +215,22 @@
                 <div class="pill-badge" id="srv-display">--</div>
             </div>
 
-            <!-- عداد الطاقة الخطي الضخم (Brutalist Power Counter) -->
+            <!-- عداد الطاقة الخطي الضخم -->
             <div class="power-counter" id="counter-box">
                 <div class="pc-header">
-                    <div class="pc-numbers">
+                    
+                    <!-- رسالة التحميل الجديدة -->
+                    <div id="loading-spots" class="loading-spots-text">
+                        جاري فحص الأماكن المتاحة <span class="blink-dots">...</span>
+                    </div>
+
+                    <!-- الأرقام (مخفية في البداية) -->
+                    <div class="pc-numbers" id="numbers-container" style="display: none;">
                         <span class="pc-current" id="spot-num">0</span>
                         <span class="pc-max">/ <span id="max-limit">15</span></span>
                     </div>
-                    <div class="pc-label">باقي 🔥</div>
+
+                    <div class="pc-label" id="label-text" style="display: none;">باقي 🔥</div>
                 </div>
                 <div class="pc-bar-bg">
                     <div class="pc-bar-fill" id="progress-bar"></div>
@@ -331,6 +353,11 @@
                 document.getElementById('spot-num').textContent = "0";
                 document.getElementById('bookAction').textContent = "مغلق لـ 1 بالليل";
                 progressBar.style.width = "0%";
+                
+                // إظهار الأرقام حتى لو مغلق
+                document.getElementById('loading-spots').style.display = 'none';
+                document.getElementById('numbers-container').style.display = 'flex';
+                document.getElementById('label-text').style.display = 'block';
                 return;
             }
             try {
@@ -338,6 +365,11 @@
                 const booked = parseInt(await res.text()) || 0;
                 const available = Math.max(0, maxLimit - booked);
                 
+                // إخفاء التحميل وإظهار الأرقام بمجرد استلام البيانات
+                document.getElementById('loading-spots').style.display = 'none';
+                document.getElementById('numbers-container').style.display = 'flex';
+                document.getElementById('label-text').style.display = 'block';
+
                 const numEl = document.getElementById('spot-num');
                 const startNum = parseInt(numEl.textContent) || 0;
                 animateValue(numEl, startNum, available, 1000);
@@ -369,7 +401,11 @@
                     document.getElementById('counter-box').style.display = 'none';
                     document.getElementById('sold-out-box').style.display = 'block';
                 }
-            } catch(e) { document.getElementById('spot-num').textContent = "!"; }
+            } catch(e) { 
+                // في حالة وجود خطأ في الاتصال
+                document.getElementById('loading-spots').innerHTML = '⚠️ خطأ في الاتصال';
+                document.getElementById('loading-spots').style.color = 'var(--alert-red)';
+            }
         }
 
         // --- Submit ---
@@ -389,7 +425,10 @@
             }
         };
 
-        setTimeout(updateData, 200); setInterval(updateData, 20000);
+        // تبدأ دالة الجلب بعد فترة قصيرة جداً
+        setTimeout(updateData, 200); 
+        setInterval(updateData, 20000);
     </script>
 </body>
 </html>
+
